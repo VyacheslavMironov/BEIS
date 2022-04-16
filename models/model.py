@@ -1,7 +1,7 @@
 from datetime import datetime
 from configparser import ConfigParser
 from email.policy import default
-from peewwee import (
+from peewee import (
     SQL,
     MySQLDatabase, 
     Model, 
@@ -23,7 +23,6 @@ db = MySQLDatabase(
 )
 
 
-<<<<<<< HEAD
 class Users(Model):
     id = BigIntegerField(primary_key=True, unique=True,
                         constraints=[SQL('AUTO_INCREMENT')])
@@ -34,8 +33,8 @@ class Users(Model):
 
     class Meta:
         database = db # This model uses the "people.db" database.
-=======
-print( DB().connect() )
-#как же я заебался с этим удалённым аккаунтом гита#
-#который раз#
->>>>>>> 9f8fa3045634ac21ca7796d3b37f6a7d25ebb974
+
+
+db.connect()
+db.create_tables([Users])
+db.close()
