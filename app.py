@@ -42,19 +42,23 @@ def login():
 def profile():
     pass
 
-@app.route('/bot-create', methods=['GET', 'POST'])
-def bot_create():
-    pass
-
 @app.route('/bots', methods=['GET'])
 def bot_all():
+    pass
+
+@app.route('/bot-create', methods=['GET', 'POST'])
+def bot_create():
     pass
 
 @app.route('/bots-info', methods=['GET'])
 def bot_info():
     pass
 
-@app.route('/bots-update', methods=['GET', 'POST'])
+@app.route('/bots-drop', methods=['GET', 'DELETE'])
+def bot_drop():
+    pass
+
+@app.route('/bots-update', methods=['GET', 'PUT'])
 def bot_update():
     pass
 
