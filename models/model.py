@@ -12,7 +12,7 @@ from peewee import (
 
 
 conf = ConfigParser()
-conf.read(filenames='config.ini')
+conf.read(filenames='models/config.ini')
 
 db = MySQLDatabase(
     conf['Mysql']['name'], 

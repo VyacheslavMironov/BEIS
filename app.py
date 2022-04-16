@@ -1,7 +1,7 @@
 # !/usr/bin/python 
 # -*- coding: utf-8 -*-
 from configparser import ConfigParser
-from flask.ext.httpauth import HTTPBasicAuth
+from flask_httpauth import HTTPBasicAuth
 from flask import (
     Flask,
     make_response,
@@ -12,17 +12,16 @@ from flask import (
     url_for
 )
 
-from .models.model import db, Users
+from models.model import db, Users
 
 
-conf = ConfigParser()
-conf.read(filenames='config.ini', encoding='utf-8')
+
 # ------------------------------------------------
 # Создание таблиц перед запуском приложения
 # ------------------------------------------------
-db.connect()
-db.create_tables([Users])
-db.close()
+# db.connect()
+# db.create_tables([Users])
+# db.close()
 # ------------------------------------------------
 app = Flask(__name__)
 
@@ -64,8 +63,4 @@ def bot_update():
 
 
 if __name__ == "__main__":
-    app.run(
-        host=conf['App']['host'], 
-        port=conf['App']['port'], 
-        debug=conf['App']['debug']
-    )
+    app.run()
