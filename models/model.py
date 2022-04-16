@@ -1,21 +1,35 @@
-from sqlite3 import Cursor
-from peewee import  MySQLDatabase
+from datetime import datetime
+from configparser import ConfigParser
+from email.policy import default
+from peewwee import (
+    SQL,
+    MySQLDatabase, 
+    Model, 
+    CharField,
+    BigIntegerField,
+    DateField
+)
 
 
-class DB:
-    def __init__(self) -> None:
-        self.name = "beis"
-        self.user = "root"
-        self.password = "263685"
-        self.port = 3306
-        self.host = "localhost"
-        
+conf = ConfigParser()
+conf.read(filenames='config.ini')
 
-    def connect(self) -> list:
-        connect=MySQLDatabase(self.name, user=self.user, password=self.password, port=self.port, host=self.host)
-        cursor=connect.cursor()
-        return [connect, cursor]
+db = MySQLDatabase(
+    conf['Mysql']['name'], 
+    user=conf['Mysql']['user'], 
+    password=conf['Mysql']['password'], 
+    port=int(conf['Mysql']['port']), 
+    host=conf['Mysql']['host']
+)
 
 
-print( DB().connect() )
-#как же я заебался с этим удалённым аккаунтом гита#
+class Users(Model):
+    id = BigIntegerField(primary_key=True, unique=True,
+                        constraints=[SQL('AUTO_INCREMENT')])
+    name = CharField()
+    surname = CharField()
+    token = CharField()
+    created_at = DateField(default=datetime.now())
+
+    class Meta:
+        database = db # This model uses the "people.db" database.
