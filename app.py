@@ -1,8 +1,14 @@
 # !/usr/bin/python 
 # -*- coding: utf-8 -*-
-from hashlib import sha1
+from cryptocode import encrypt, decrypt
+from datetime import datetime
+from random import choice
+from string import ascii_lowercase
+from logging import basicConfig, DEBUG, error, info
+from peewee import IntegrityError
 from configparser import ConfigParser
 from flask_httpauth import HTTPBasicAuth
+from flask_cors import CORS, cross_origin
 from flask import (
     Flask,
     make_response,
@@ -16,7 +22,7 @@ from flask import (
 from models.model import db, Users, Messangers, Messagers, Bots
 
 
-
+basicConfig(filename='log/error.log', level=DEBUG, filemode='w',)
 # ------------------------------------------------
 # Создание таблиц перед запуском приложения
 # ------------------------------------------------
@@ -25,34 +31,42 @@ db.create_tables([Users, Messangers, Messagers, Bots])
 db.close()
 # ------------------------------------------------
 app = Flask(__name__)
+cors = CORS(app, resources={r"/*": {"origins": "*"}}, headers='Content-Type')
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 # @app.route('/', methods=['GET'])
 # def index():
 #     pass
 
-@app.route('/signup', methods=['POST'])
+@app.route('/api/v1/signup', methods=['GET', 'POST'])
+@cross_origin()
 def registration():
     if request.method == "POST":
-        name = request.form.get("name")
-        surname = request.form.get("surname")
-        token = request.form.get("token")
-        password = request.form.get("password")
-        created_at = request.form.get("created_at")
+        name = request.get_json().get("data")["name"]
+        surname = request.get_json().get("data")["surname"]
+        email = request.get_json().get("data")["email"]
+        token = ''.join(choice(ascii_lowercase) for i in range(30))
+        password = encrypt(request.get_json().get("data")["password"], 'wow')
+        created_at = datetime.now()
 
         # Проверка на заполненость данных
-        if name is None or surname is None or password is None:
+        if name is None or surname is None or email is None or password is None:
             return abort(400)
-        
+        else:
+            try:
+                # Добавление пользователя
+                user = Users.insert(name = name, surname = surname, email = email, 
+                    token = token, password = password, created_at = created_at ).execute()
 
-        return (jsonify(
-            {
-                'name': name, 
-                'surname': surname, 
-                'token': token, 
-                'password': password,
-                'created_at': created_at
-            }
-        ), 200)
+                if user:
+                    # Сохранение
+                    return (jsonify({'response': True, 'token': token}), 200)
+                else:
+                    return (jsonify({'response': False, 'token': None}), 200)
+            except IntegrityError as e:
+                error(msg=e)
+
 
 # @app.route('/sigin', methods=['GET', 'POST'])
 # def login():

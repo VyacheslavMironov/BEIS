@@ -1,6 +1,7 @@
 from datetime import datetime
 from configparser import ConfigParser
 from email.policy import default
+from enum import unique
 from peewee import (
     SQL,
     MySQLDatabase, 
@@ -29,6 +30,7 @@ class Users(Model):
                         constraints=[SQL('AUTO_INCREMENT')])
     name = CharField(max_length=30)
     surname = CharField(max_length=35)
+    email = CharField(max_length=40, unique=True)
     token = CharField(max_length=500)
     password = CharField(max_length=500)
     created_at = DateField(default=datetime.now())
